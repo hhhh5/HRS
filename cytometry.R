@@ -32,43 +32,42 @@ LC = LC[,.(
 	,PWBC                           # WHITE BLOOD CELL COUNT - 10E9/L
 		
 	# of the following 5 cell types I won't use lymphocytes but the more granular subtypes from `flow`
-	,NE = PNEUT / 100               # PERCENT NEUTROPHILS
-	,EO = PEOS  / 100               # PERCENT EOSINOPHILS
-	,BA = PBASO / 100               # PERCENT BASOPHILSq
-	,LY = PLYMP / 100               # PERCENT LYMPHOCYTES
-	,MO = PMONO / 100               # PERCENT MONOCYTES
+	,NE = PNEUT / 100              # PERCENT NEUTROPHILS
+	,EO = PEOS  / 100              # PERCENT EOSINOPHILS
+	,BA = PBASO / 100              # PERCENT BASOPHILSq
+	,LY = PLYMP / 100              # PERCENT LYMPHOCYTES
+	,MO = PMONO / 100              # PERCENT MONOCYTES
 
-	,T = PTcell_count / PWBC
+	,T     = PTcell_count / PWBC   # T cells
 
-	,CT    =    PCT_count / PWBC
-	,EM_CT = PEM_CT_count / PWBC
-	,CM_CT = PCM_CT_count / PWBC
-	,E_CT  =  PE_CT_count / PWBC
-	,N_CT  =  PN_CT_count / PWBC
+	,CT    =     PCT_count / PWBC  # cytotoxic T cells
+	,EM_CT =  PEM_CT_count / PWBC  # Effector memory cytotoxic T cells
+	,CM_CT =  PCM_CT_count / PWBC  # Central memory cytotoxic T cells
+	,E_CT  =   PE_CT_count / PWBC  # Effector cytotoxic T cells
+	,N_CT  =   PN_CT_count / PWBC  # Naive cytotoxic T cells
 	
-	,HT    =    PHT_count / PWBC
-	,EM_HT = PEM_HT_count / PWBC    #!!!!!!!!!!!!!!!!# Should I use the new measurements here?
-	,CM_HT = PCM_HT_count / PWBC
-	,E_HT  =  PE_HT_count / PWBC
-	,N_HT  =  PN_HT_count / PWBC
+	,HT    =     PHT_count / PWBC  # Helper T cells
+	,EM_HT =  PEM_HT_count / PWBC  # Effector memory helper T cells !!!!!! Should I use the new measurements here?
+	,CM_HT =  PCM_HT_count / PWBC  # Central memory helper T cells
+	,E_HT  =   PE_HT_count / PWBC  # Effector Memory
+	,N_HT  =   PN_HT_count / PWBC  # Naive helper T cells 
 
-	,B              =          PBcell_count / PWBC
-	,NaiveB         =         PNaiveB_count / PWBC
-	,IgD_Plus_MemB  =  PIgD_Plus_MemB_count / PWBC
-	,IgD_Minus_MemB = PIgD_Minus_MemB_count / PWBC
+	,B              =          PBcell_count / PWBC  # B lymphocytes
+	,NaiveB         =         PNaiveB_count / PWBC  # CD27- naive B cells
+	,IgD_Plus_MemB  =  PIgD_Plus_MemB_count / PWBC  # IgD+ Memory B cells
+	,IgD_Minus_MemB = PIgD_Minus_MemB_count / PWBC  # IgD- Memory B cells
 
 	,MON   =   PMONO_count / PWBC  # Monocytes
-	,MONC  =  PMONOc_count / PWBC
-	,MONNC = PMONOnc_count / PWBC
+	,MONC  =  PMONOc_count / PWBC  # classical monocytes
+	,MONNC = PMONOnc_count / PWBC  # non-classical monocytes
 
 	,DC    =     PDC_count / PWBC  # Dendritic cells
-	,DCm   =    PDCm_count / PWBC
-	,DCp   =    PDCp_count / PWBC
+	,DCm   =    PDCm_count / PWBC  # CD11c+ myeloid dendritic cells
+	,DCp   =    PDCp_count / PWBC  # CD123+ plasmacytoid dendritic cells
 
 	,NK    =     PNK_count / PWBC  # Natural killer cells
-	,NKHI  =   PNKHI_count / PWBC
-	,NKLO  =   PNKLO_count / PWBC
-
+	,NKHI  =   PNKHI_count / PWBC  # CD56 high NK cells
+	,NKLO  =   PNKLO_count / PWBC  # CD56 low NK cells
 
    	# Percentages for the same blood cell types
 
