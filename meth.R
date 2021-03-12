@@ -49,11 +49,16 @@ common = intersect(
 snps = ewastools:::manifest_epic[probe_type=="rs"]$probe_id
 autosomal = ! ewastools:::manifest_epic$chr %in% c('chrX','chrY')
 
-meth = matrix(NA_real_,nrow=length(common),ncol=pheno[,.N])
-rownames(meth) = common
-
 pheno[,j:=.I]
 chunks = split(pheno,pheno$j %/% 200)
+
+# Store matrix of beta-values on hard drive
+meth = ff(
+	 initdata=NA_real_
+	,dim=c(length(common),nrow(pheno))
+	,filename='intermediate/meth.ff')
+
+
 
 f = function(pheno){
 
@@ -76,10 +81,10 @@ f = function(pheno){
 		mask(tmp,threshold=0.05) %>%
 		dont_normalize
 
-	meth[,pheno$j] <- tmp[common,]
-
 	# Epigenetic age
 	pheno$horvath = ewastools:::methylation_score(tmp,model="horvath_clock")
+
+	meth[,pheno$j] <<- tmp[common,]
 
 	chunk = list(
 		 pheno = pheno
@@ -87,16 +92,14 @@ f = function(pheno){
 		,snps = tmp[snps,]
 		)
 
-	rm(tmp); gc()
-
 	chunk
 }
 
-chunks %<>% map(f)
+x = lapply(chunks,f)
 
-snps    = chunks %>% map('snps')    %>% do.call('cbind',.)
-metrics = chunks %>% map('metrics') %>% rbindlist
-pheno   = chunks %>% map('pheno')   %>% rbindlist
+snps    = x %>% map('snps')    %>% do.call('cbind',.)
+metrics = x %>% map('metrics') %>% rbindlist
+pheno   = x %>% map('pheno')   %>% rbindlist
 
 ## ---------------------------------------------------
 ## Quality control
@@ -173,9 +176,10 @@ meth    = meth   [,keep]
 snps    = snps   [,keep]
 metrics = metrics[ keep]
 
-save(pheno,snps,metrics,autosomal,common,file='intermediate/processed.rda')
 
 # Store matrix of beta-values on hard drive
-meth = as.ff(meth,filename='intermediate/meth.ff')
+tmp = as.ff(meth,filename='intermediate/meth_pass.ff')
+
+save(pheno,snps,metrics,autosomal,common,file='intermediate/processed.rda')
 
 rm(tmp,f,i,p,chunks,keep)
