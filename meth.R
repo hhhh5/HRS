@@ -176,6 +176,8 @@ meth    = meth   [,keep]
 snps    = snps   [,keep]
 metrics = metrics[ keep]
 
+# update column indices
+pheno[,j:=.I]
 
 # Store matrix of beta-values on hard drive
 tmp = as.ff(meth,filename='intermediate/meth_pass.ff')
