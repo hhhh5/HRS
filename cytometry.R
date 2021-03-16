@@ -1,7 +1,8 @@
 # Flow cytometry measurements
 
-flow = "/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/hrsflowdata2016.sas7bdat"
-vbs  = "/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/hrs2016vbs.sas7bdat"
+flow  = '/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/hrsflowdata2016.sas7bdat'
+vbs   = '/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/hrs2016vbs.sas7bdat'
+xwalk = '/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/xwalk.csv'
 
 flow %<>% read_sas %>% as.data.table
 vbs  %<>% read_sas %>% as.data.table
@@ -158,5 +159,16 @@ LC$total = rowSums(as.matrix(LC[,..celltypes]))
 LC = LC[total %between% c(0.9,1.02)]
 LC[,total:=NULL]
 
+
+xwalk %<>% fread
+xwalk = xwalk[,.(
+	 FID  = Sample_Name
+	,HHID = stri_pad_left(HHID,width=6,pad='0')
+	,PN   = paste0('0',PN)
+	)]
+
+LC = LC[xwalk,on=c('HHID','PN'),nomatch=NULL]
+
+
 ## Cleanup
-rm(flow,vbs,i)
+rm(flow,vbs,xwalk,i)
