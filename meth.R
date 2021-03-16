@@ -55,8 +55,7 @@ chunks = split(pheno,pheno$j %/% 200)
 # Store matrix of beta-values on hard drive
 meth = ff(
 	 initdata=NA_real_
-	,dim=c(length(common),nrow(pheno))
-	,filename='intermediate/meth.ff')
+	,dim=c(length(common),nrow(pheno)))
 
 
 
@@ -180,7 +179,8 @@ metrics = metrics[ keep]
 pheno[,j:=.I]
 
 # Store matrix of beta-values on hard drive
-tmp = as.ff(meth,filename='intermediate/meth_pass.ff')
+meth = as.ff(meth)
+ffsave(meth,file='intermediate/meth')
 
 save(pheno,snps,metrics,autosomal,common,file='intermediate/processed.rda')
 
