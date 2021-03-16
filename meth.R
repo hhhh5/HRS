@@ -46,7 +46,7 @@ common = intersect(
 	,ewastools:::manifest_epic[probe_type!='rs' & !chr %in% c('chrX','chrY')]$probe_id
 	)
 
-snps = ewastools:::manifest_epic[probe_type=="rs"]$probe_id
+snps = ewastools:::manifest_epic[probe_type=='rs']$probe_id
 autosomal = ! ewastools:::manifest_epic$chr %in% c('chrX','chrY')
 
 pheno[,j:=.I]
@@ -67,7 +67,7 @@ f = function(pheno){
 		detectionP %>%
 		correct_dye_bias
 
-	pheno[,c("X","Y"):=check_sex(tmp)]
+	pheno[,c('X','Y'):=check_sex(tmp)]
 
 	pheno$undetected = colSums(tmp$detP[autosomal,] > 0.05,na.rm=TRUE)
 	
@@ -81,7 +81,7 @@ f = function(pheno){
 		dont_normalize
 
 	# Epigenetic age
-	pheno$horvath = ewastools:::methylation_score(tmp,model="horvath_clock")
+	pheno$horvath = ewastools:::methylation_score(tmp,model='horvath_clock')
 
 	meth[,pheno$j] <<- tmp[common,]
 
@@ -108,17 +108,17 @@ pheno[,failed:=FALSE]
 
 ## -----------
 ## Sex check
-pheno[,predicted_sex:=predict_sex(X,Y,which(sex=="m"),which(sex=="f"))]
+pheno[,predicted_sex:=predict_sex(X,Y,which(sex=='m'),which(sex=='f'))]
 table(pheno$sex == pheno$predicted_sex)
 # FALSE  TRUE 
 #     1  3994 
 
 png('intermediate/qc1.png')
 tmp = pheno[sex==predicted_sex]
-plot  (Y ~ X,data=tmp,pch=ifelse(tmp$sex=="f",1,4),asp=1,xlab="Normalized X chromosome intensities",ylab="Normalized Y chromosome intensities")
+plot  (Y ~ X,data=tmp,pch=ifelse(tmp$sex=='f',1,4),asp=1,xlab='Normalized X chromosome intensities',ylab='Normalized Y chromosome intensities')
 tmp = pheno[sex!=predicted_sex]
-points(Y ~ X,data=tmp,pch=ifelse(tmp$sex=="f",1,4),col=2)
-legend("topright",pch=c(1,4),legend=c("female","male"))
+points(Y ~ X,data=tmp,pch=ifelse(tmp$sex=='f',1,4),col=2)
+legend('topright',pch=c(1,4),legend=c('female','male'))
 dev.off()
 
 pheno[sex!=predicted_sex,failed:=TRUE]
@@ -140,8 +140,8 @@ table(pheno$snp_outlier > -3)
 
 pheno[snp_outlier > -3,failed:=TRUE]
 
-png("intermediate/snps.png")
-stripchart(pheno$snp_outlier,m="j")
+png('intermediate/snps.png')
+stripchart(pheno$snp_outlier,m='j')
 abline(v=-3,lty=3,col=2)
 dev.off()
 
@@ -161,10 +161,10 @@ tmp = melt(tmp,id.var='plate')
 
 p = ( ggplot(tmp)
 + geom_boxplot(aes(x=plate,y=value))
-+ facet_wrap(facets=~variable,ncol=2,scales="free_y")
++ facet_wrap(facets=~variable,ncol=2,scales='free_y')
 )
 
-ggsave(p,file="intermediate/metrics.pdf")
+ggsave(p,file='intermediate/metrics.pdf')
 
 ## ---------------------------------------------------
 
