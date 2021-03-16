@@ -144,7 +144,7 @@ LC = LC[,.(
 
 
 # These are the cell types we'd like to estimate
-celltypes = c("NE","EO","BA","MO","EM_CT","CM_CT","E_CT","N_CT","EM_HT","CM_HT","E_HT","N_HT","B","DC","NK")
+celltypes = c('NE','EO','BA','MO','EM_CT','CM_CT','E_CT','N_CT','EM_HT','CM_HT','E_HT','N_HT','B','DC','NK')
 
 # Drop rows with missing values for the required cell types
 i = is.na(LC[,..celltypes])
