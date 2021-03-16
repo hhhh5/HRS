@@ -42,8 +42,8 @@ pheno[,c('calculated_age','BIRTHMO','BIRTHYR','COLLECTDATE','birthday'):=NULL]
 ## Read in .idat files in chunks
 
 common = intersect(
-	 ewastools:::manifest_450K[probe_type!="rs"]$probe_id
-	,ewastools:::manifest_epic[probe_type!="rs"]$probe_id
+	 ewastools:::manifest_450K[probe_type!='rs' & !chr %in% c('chrX','chrY')]$probe_id
+	,ewastools:::manifest_epic[probe_type!='rs' & !chr %in% c('chrX','chrY')]$probe_id
 	)
 
 snps = ewastools:::manifest_epic[probe_type=="rs"]$probe_id
