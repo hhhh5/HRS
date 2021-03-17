@@ -15,6 +15,10 @@ pheno = pheno[,.(
 	,COLLECTDATE # {%Y-%m-%d %H:%M:%S}
 	)]
 
+pheno = pheno[FID %in% LC$FID]
+
+setkey(pheno,'FID')
+
 ## ---------------------------------------------------
 ## Are all .idat files available?
 table(file.exists(pheno$file %s+% '_Grn.idat'))
@@ -110,8 +114,6 @@ pheno[,failed:=FALSE]
 ## Sex check
 pheno[,predicted_sex:=predict_sex(X,Y,which(sex=='m'),which(sex=='f'))]
 table(pheno$sex == pheno$predicted_sex)
-# FALSE  TRUE 
-#     1  3994 
 
 png('intermediate/qc1.png')
 tmp = pheno[sex==predicted_sex]
@@ -126,8 +128,6 @@ pheno[sex!=predicted_sex,failed:=TRUE]
 ## -----------
 ## Undetected probes
 table(pheno$undetected > 1e5)
-# FALSE  TRUE 
-#  3534   484
 pheno[undetected > 1e5,failed:=TRUE]
 
 ## -----------
@@ -135,8 +135,6 @@ pheno[undetected > 1e5,failed:=TRUE]
 tmp = call_genotypes(snps)
 pheno$snp_outlier = snp_outliers(tmp)
 table(pheno$snp_outlier > -3)
-# FALSE  TRUE 
-#  3910   108 
 
 pheno[snp_outlier > -3,failed:=TRUE]
 
@@ -151,9 +149,8 @@ dev.off()
 i = sample_failure(metrics)
 table(i)
 # FALSE  TRUE 
-#  3836   182 
+#  2753   143
 pheno[i,failed:=TRUE]
-
 
 tmp = copy(metrics)
 tmp$plate = pheno$plate
