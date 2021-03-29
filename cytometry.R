@@ -19,6 +19,7 @@ LC = flow[vbs,on=c('HHID','PN'),nomatch=NULL];
 LC[,.N]
 
 # Select the relevant variables
+# I use PNEUT instead of PANEU/PWBC as PANEU seems to be a rounded value. Same goes for the other cell types.
 LC = LC[,.(
 
 	 HHID                           # Household Identifier
