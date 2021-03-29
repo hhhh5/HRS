@@ -45,13 +45,14 @@ pheno[,c('calculated_age','BIRTHMO','BIRTHYR','COLLECTDATE','birthday'):=NULL]
 ## ---------------------------------------------------
 ## Read in .idat files in chunks
 
+# Reduce to Cpg sites common to EPIC and 450K. Also necessary because full set of sites too large (more than Machine$integer.max)
 common = intersect(
-	 ewastools:::manifest_450K[probe_type!='rs' & !chr %in% c('chrX','chrY')]$probe_id
-	,ewastools:::manifest_epic[probe_type!='rs' & !chr %in% c('chrX','chrY')]$probe_id
+	 ewastools:::manifest_450K[probe_type!='rs' & !chr %in% c('X','Y')]$probe_id
+	,ewastools:::manifest_epic[probe_type!='rs' & !chr %in% c('X','Y')]$probe_id
 	)
 
 snps = ewastools:::manifest_epic[probe_type=='rs']$probe_id
-autosomal = ! ewastools:::manifest_epic$chr %in% c('chrX','chrY')
+autosomal = ! ewastools:::manifest_epic$chr %in% c('X','Y')
 
 pheno[,j:=.I]
 chunks = split(pheno,pheno$j %/% 200)
