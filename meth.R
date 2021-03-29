@@ -176,6 +176,14 @@ metrics = metrics[ keep]
 # update column indices
 pheno[,j:=.I]
 
+# drop probes for which a third of measurements are missing
+i = rowSums(is.na(meth))
+i = which(i < ncol(meth)/3)
+meth   = meth  [i,]
+common = common[i]
+
+rownames(meth) = common
+
 # Store matrix of beta-values on hard drive
 meth = as.ff(meth)
 ffsave(meth,file='intermediate/meth')
