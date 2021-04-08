@@ -15,7 +15,7 @@ library(ff)
 
 
 source('cytometry.R')
-source('meth.R')
+# source('meth.R')
 
 ffload('intermediate/meth')
   load('intermediate/meth.RData')
@@ -48,3 +48,8 @@ write.table(coefs,file='intermediate/HRS.txt')
 
 # ---------------------------------------------------
 # Model evaluation
+
+coefs = read.table('intermediate/HRS.txt',header=TRUE,)
+coefs %<>% as.matrix
+
+source('evalR')
