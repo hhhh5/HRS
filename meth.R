@@ -10,10 +10,13 @@ pheno = pheno[,.(
 	,file = paste0('/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/idats/',Slide,'_',Array)
 	,sex = ifelse(Reported == 'M','m','f')
 	,age = PAGE  # patient age  
+	,race  = RACE 
 	,BIRTHMO     # ‘%Y’ Year with century.
 	,BIRTHYR     # ‘%m’ Month as decimal number (01-12).
 	,COLLECTDATE # {%Y-%m-%d %H:%M:%S}
 	)]
+
+pheno[,race:=factor(race,levels=c(1,2,7,0),labels=c('white','black','other','unknown'))]
 
 pheno = pheno[FID %in% LC$FID]
 
