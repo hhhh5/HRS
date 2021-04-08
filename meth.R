@@ -7,9 +7,9 @@ pheno %<>% readRDS %>% as.data.table
 pheno = pheno[,.(
 	 FID
 	,plate = Sample_Plate # {Thyagarajan_Sample_127}
-	,file = paste0('/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/idats/',Slide,'_',Array)
-	,sex = ifelse(Reported == 'M','m','f')
-	,age = PAGE  # patient age  
+	,file  = paste0('/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/idats/',Slide,'_',Array)
+	,sex   = ifelse(Reported == 'M','m','f')
+	,age   = PAGE  # patient age
 	,race  = RACE 
 	,BIRTHMO     # ‘%Y’ Year with century.
 	,BIRTHYR     # ‘%m’ Month as decimal number (01-12).
@@ -108,6 +108,8 @@ snps    = x %>% map('snps')    %>% do.call('cbind',.)
 metrics = x %>% map('metrics') %>% rbindlist
 pheno   = x %>% map('pheno')   %>% rbindlist
 
+rm(x,chunks,f)
+
 ## ---------------------------------------------------
 ## Quality control
 
@@ -193,4 +195,4 @@ ffsave(meth,file='intermediate/meth')
 
 save(pheno,snps,metrics,autosomal,common,file='intermediate/processed.rda')
 
-rm(tmp,f,i,p,chunks,keep)
+rm(tmp,i,p,keep)
