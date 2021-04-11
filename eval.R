@@ -1,26 +1,7 @@
 LC0 = pheno[,..celltypes]
 
-est_LC = function(beta,coefs){
- 
-	ib = match(rownames(coefs),names(beta))
-	ic = !is.na(ib) & !is.na(beta[ib])
-	ib = ib[ic]
-
-	n_celltypes = ncol(coefs)
-
-	props = solve.QP(
-		 t(coefs[ic,]) %*% coefs[ic,]
-		,t(coefs[ic,]) %*% beta[ib]
-		,diag(n_celltypes)
-		,rep(0,times=n_celltypes)
-		)$sol
-
-	names(props) = colnames(coefs)
-	props
-}
-
-
-LC1 = map(pheno$j,~ est_LC(meth[,.x],coefs  )) %>% do.call('rbind',.) %>% data.table
+LC1 = map(pheno$j,~ est_LC(meth[,.x],coefs  )
+LC1 %<>% do.call('rbind',.) %>% data.table
 
 raw_correlations = sapply(celltypes,function(ct){
 	cor(LC0[[ct]][test],LC1[[ct]][test])
@@ -29,18 +10,8 @@ raw_correlations = sapply(celltypes,function(ct){
 # ---------------------------------------------------
 # Estimates based on Reinius
 
-reinius =
-	system.file('data/Reinius.txt',package='ewastools') %>%
-	read.table %>%
-	as.matrix
-
-table(rownames(reinius) %in% common)
-# FALSE  TRUE 
-#     3   597 
-
-reinius = reinius[rownames(reinius) %in% common,]
-
-LC2 = map(pheno$j,~ est_LC(meth[,.x],reinius)) %>% do.call('rbind',.) %>% data.table
+LC2 = map(pheno$j,~ est_LC(meth[,.x],reinius)) 
+LC2 %<>% do.call('rbind',.) %>% data.table
 
 # ---------------------------------------------------
 # Principal components of control metrics
@@ -63,8 +34,6 @@ rm(tmp,pcs)
 # ---------------------------------------------------
 # How much variance explain the various estimates
 
-BASELINE = pheno[,.(sex,age,plate,pc1,pc2,pc3,pc4,pc5)]
-
 exp_var = function(covars){
 	frml = paste0("meth~",paste0(names(covars),collapse="+"))
 	frml = formula(frml)
@@ -84,6 +53,8 @@ exp_var = function(covars){
 }
 
 features = setdiff(common,rownames(coefs))
+
+BASELINE = pheno[,.(sex,age,plate,pc1,pc2,pc3,pc4,pc5)]
 
 
 EXPV = list()

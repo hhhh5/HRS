@@ -49,7 +49,38 @@ write.table(coefs,file='intermediate/HRS.txt')
 # ---------------------------------------------------
 # Model evaluation
 
+est_LC = function(beta,coefs){
+ 
+	ib = match(rownames(coefs),names(beta))
+	ic = !is.na(ib) & !is.na(beta[ib])
+	ib = ib[ic]
+
+	n_celltypes = ncol(coefs)
+
+	props = solve.QP(
+		 t(coefs[ic,]) %*% coefs[ic,]
+		,t(coefs[ic,]) %*% beta[ib]
+		,diag(n_celltypes)
+		,rep(0,times=n_celltypes)
+		)$sol
+
+	names(props) = colnames(coefs)
+	props
+}
+
 coefs = read.table('intermediate/HRS.txt',header=TRUE,)
 coefs %<>% as.matrix
 
-source('evalR')
+reinius =
+	system.file('data/Reinius.txt',package='ewastools') %>%
+	read.table %>%
+	as.matrix
+
+table(rownames(reinius) %in% common)
+# FALSE  TRUE 
+#     3   597 
+
+reinius = reinius[rownames(reinius) %in% common,]
+
+source('eval.R')
+source('ewas.R')
