@@ -103,6 +103,8 @@ gains = data.table(
 gains = gains[order(-measured)][1:10000]
 gains[,x:=.I]
 
+table(gains[,measured > estimated])
+
 p =
 ( ggplot(gains)
 + geom_point(aes(x=x,y=estimated),col='red',alpha=0.4,shape=20,size=0.5,show.legend=FALSE)
