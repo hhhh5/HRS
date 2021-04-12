@@ -110,6 +110,8 @@ EWAS$LC2 = map_dbl(tmp,2)
 mean(EXPV$LC1 - EXPV$REF)
 mean(EXPV$LC2 - EXPV$REF)
 
+length(features)
+sum(p.adjust(EWAS$REF,m='b') < 0.05,na.rm=TRUE)
 sum(p.adjust(EWAS$LC1,m='b') < 0.05,na.rm=TRUE)
 sum(p.adjust(EWAS$LC2,m='b') < 0.05,na.rm=TRUE)
 
