@@ -16,6 +16,37 @@ pheno = pheno[,.(
 	,COLLECTDATE # {%Y-%m-%d %H:%M:%S}
 	)]
 
+# 39 subjects with technical replicates
+dupes = '/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/methyl_dupes_pheno.rds'
+dupes %<>% readRDS %>% data.table
+
+dupes = dupes[,.(
+	 FID   = Original.Sample.ID        # {F0000000}
+	,plate = dupe_plate                # {Thyagarajan_Sample_190}
+	,file  = paste0('/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/idats/',dupe_methid) # {202711530006_R04C01}
+	,sex   = ifelse(GENDER==1,'m','f') # {1/2}
+	,age   = PAGE                    
+	,race  = RACE                      # {1/2/7}
+	# ,blindedID = Blind.Dup.ID        # {F0000000}
+	# ,orig_methid                     # {202163110034_R05C01}
+	# ,HHID                            # Household Identifier {000000}
+	# ,PN                              # PERSON NUMBER {000}
+	# ,Pair.ID                         # {HRSDNA11}
+	# ,methylation.plates              # {onto T13}
+	# ,X                               # {12-H9}
+	# ,Bharat.s.Lab.plates             # {dup 11}
+	# ,X.1                             # {onto T31}
+	# ,orig_plate                      # {Thyagarajan_Sample_111}
+	# ,HISPANIC                        # {1/2/5}
+	# ,ethrace                         # {h/nhb/nhw}
+	)]
+
+# Mark original and duplicate samples
+pheno$rep = 1L
+dupes$rep = 2L
+
+pheno = rbind(pheno,dupes,use.names=TRUE,fill=TRUE); rm(dupes)
+
 pheno[,race:=factor(race,levels=c(1,2,7,0),labels=c('white','black','other','unknown'))]
 
 pheno = pheno[FID %in% LC$FID]
@@ -149,6 +180,13 @@ stripchart(pheno$snp_outlier,m='j')
 abline(v=-3,lty=3,col=2)
 dev.off()
 
+## -----------
+# Do the genotypes match for dupes
+
+pheno$genotype = enumerate_sample_donors(tmp)
+
+tmp = dcast(pheno,FID ~ rep,value.var='genotype')
+table(tmp[,`1` == `2`])
 
 ## -----------
 ## Control probe metrics
@@ -170,6 +208,7 @@ p = ( ggplot(tmp)
 ggsave(p,file='intermediate/metrics.pdf')
 
 ## ---------------------------------------------------
+# Subsetting
 
 keep = which(pheno$failed==FALSE)
 
