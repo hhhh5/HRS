@@ -59,7 +59,7 @@ BASELINE = pheno[,.(sex,age,plate,pc1,pc2,pc3,pc4,pc5)]
 
 EXPV = list()
 
-f = exp_var(BASELINE)
+f = exp_var(copy(BASELINE))
 EXPV$REF = unlist(mclapply(features,f,mc.cores=10))
 
 f = exp_var(cbind(BASELINE,LC0))
