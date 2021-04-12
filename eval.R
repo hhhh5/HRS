@@ -1,6 +1,6 @@
 LC0 = pheno[,..celltypes]
 
-LC1 = map(pheno$j,~ est_LC(meth[,.x],coefs  )
+LC1 = map(pheno$j,~ est_LC(meth[,.x],coefs  ))
 LC1 %<>% do.call('rbind',.) %>% data.table
 
 raw_correlations = sapply(celltypes,function(ct){
