@@ -115,3 +115,62 @@ p =
 
 ggsave(p,file='gains.png',width=5,height=5)
 
+# ---------------------------------------------------
+# Duplicates
+
+dupes = dcast(pheno,FID ~ rep,value.var='j')
+dupes %<>% na.omit
+
+r1 = LC1[dupes$`1`]
+r2 = LC1[dupes$`2`]
+
+r1[,i:=.I]
+r2[,i:=.I]
+
+r1 = melt(r1,id.var='i',variable.name='cell_type',value.name='prop')
+r2 = melt(r2,id.var='i',variable.name='cell_type',value.name='prop')
+
+dupes = r1[r2,on=.(i,cell_type)]
+
+rel.meth = dupes[,cor(prop,i.prop),cell_type]
+
+
+flow2 = '/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/flowdata_qc_2018febforJessica.xlsx'
+flow2 %<>% read_excel %>% as.data.table
+
+# 204 subjects
+flow2 = flow2[,.(
+	 part_no           # {100A}
+	# ,FID = SUBJECTID   # {F1638943}
+	,DC_freq           # 
+	# ,DCm_freq          # 
+	# ,DCp_freq          # 
+	,NK_freq           # 
+	# ,NKHI_freq         # 
+	# ,NKLO_freq         # 
+	,MONO_freq         # 
+	# ,MONOc_freq        # 
+	# ,MONOnc_freq       # 
+	# ,PBMC_count        # 
+	# ,DC_count          # 
+	# ,DCm_count         # 
+	# ,DCp_count         # 
+	# ,NK_count          # 
+	# ,NKHI_count        # 
+	# ,NKLO_count        # 
+	# ,MONO_count        # 
+	# ,MONOc_count       # 
+	# ,MONOnc_count      # 
+	)]
+
+flow2[,i:=stri_sub(part_no,1,-2)]
+flow2[,r:=stri_sub(part_no,-1,-1)]
+flow2$part_no = NULL
+
+flow2 = melt(flow2,id.vars=c('i','r'),variable.name='cell_type',value.name='freq')
+flow2 = dcast(flow2,i + cell_type ~ r,value.var='freq')
+flow2 %<>% na.omit
+rel.flow = flow2[,cor(A,B),cell_type]
+
+rel.meth
+rel.flow
