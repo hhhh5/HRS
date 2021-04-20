@@ -32,8 +32,8 @@ plates = as.character(98:129)
 plates = stri_pad(plates,width=3,pad='0')
 plates = paste0('Thyagarajan_Sample_',plates)
 
-train = pheno[plate %in% plates]$j
-test  = setdiff(pheno$j,train)
+train = pheno[plate %in% plates & rep == 1]$j
+test  = setdiff(pheno[rep==1]$j,train)
 
 cat('# samples in training set:',length(train),'\n')
 cat('# samples in test     set:',length(test ),'\n')
