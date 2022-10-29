@@ -4,8 +4,9 @@ flow  = '/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/hrsflowdata20
 vbs   = '/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/hrs2016vbs.sas7bdat'
 xwalk = '/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/flow/xwalk.csv'
 
-flow %<>% read_sas %>% as.data.table
-vbs  %<>% read_sas %>% as.data.table
+flow  %<>% read_sas %>% as.data.table
+vbs   %<>% read_sas %>% as.data.table
+xwalk %<>% fread
 
 # Make sure that the combination of `HHID` and `PN` is unique
 # Result should be `0`
@@ -18,12 +19,21 @@ LC = flow[vbs,on=c('HHID','PN'),nomatch=NULL];
 # 9933 subjects
 LC[,.N]
 
+xwalk = xwalk[,.(
+	 FID  = Sample_Name
+	,HHID = stri_pad_left(HHID,width=6,pad='0')
+	,PN   = paste0('0',PN)
+	)]
+
+LC = LC[xwalk,on=c('HHID','PN'),nomatch=NULL]
+
 # Select the relevant variables
 # I use PNEUT instead of PANEU/PWBC as PANEU seems to be a rounded value. Same goes for the other cell types.
 LC = LC[,.(
 
 	 HHID                           # Household Identifier
 	,PN                             # PERSON NUMBER
+	,FID
 
 	# ,PANEU                          # NEUTROPHIL COUNT - X10E9/L
 	# ,PAEOS                          # EOSINOPHIL COUNT - X10E9/L
@@ -156,20 +166,9 @@ LC[,.N]
 
 # Cell types should sum up to approximately 1 for each sample
 # Drop samples for which this does not hold true
-LC$total = rowSums(as.matrix(LC[,..celltypes]))
+LC[,total:=rowSums(.SD),.SDcols=celltypes]
 LC = LC[total %between% c(0.9,1.02)]
 LC[,total:=NULL]
-
-
-xwalk %<>% fread
-xwalk = xwalk[,.(
-	 FID  = Sample_Name
-	,HHID = stri_pad_left(HHID,width=6,pad='0')
-	,PN   = paste0('0',PN)
-	)]
-
-LC = LC[xwalk,on=c('HHID','PN'),nomatch=NULL]
-
 
 ## Cleanup
 rm(flow,vbs,xwalk,i)
