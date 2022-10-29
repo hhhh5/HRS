@@ -36,7 +36,7 @@ LC = LC[,.(
 	# of the following 5 cell types I won't use lymphocytes but the more granular subtypes from `flow`
 	,NE = PNEUT / 100              # PERCENT NEUTROPHILS
 	,EO = PEOS  / 100              # PERCENT EOSINOPHILS
-	,BA = PBASO / 100              # PERCENT BASOPHILSq
+	,BA = PBASO / 100              # PERCENT BASOPHILS
 	,LY = PLYMP / 100              # PERCENT LYMPHOCYTES
 	,MO = PMONO / 100              # PERCENT MONOCYTES
 
