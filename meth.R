@@ -150,7 +150,9 @@ pheno[,failed:=FALSE]
 ## -----------
 ## Sex check
 pheno[,predicted_sex:=predict_sex(X,Y,which(sex=='m'),which(sex=='f'))]
-table(pheno$sex == pheno$predicted_sex)
+table(pheno$sex == pheno$predicted_sex)                           
+# FALSE  TRUE                                            
+#     1  2908  
 
 png('intermediate/qc1.png')
 tmp = pheno[sex==predicted_sex]
@@ -165,6 +167,9 @@ pheno[sex!=predicted_sex,failed:=TRUE]
 ## -----------
 ## Undetected probes
 table(pheno$undetected > 1e5)
+# FALSE  TRUE 
+#  2571   351 
+
 pheno[undetected > 1e5,failed:=TRUE]
 
 ## -----------
@@ -172,6 +177,8 @@ pheno[undetected > 1e5,failed:=TRUE]
 tmp = call_genotypes(snps)
 pheno$snp_outlier = snp_outliers(tmp)
 table(pheno$snp_outlier > -3)
+# FALSE  TRUE 
+#  2846    76 
 
 pheno[snp_outlier > -3,failed:=TRUE]
 
@@ -192,8 +199,9 @@ table(tmp[,`1` == `2`])
 ## Control probe metrics
 i = sample_failure(metrics)
 table(i)
-# FALSE  TRUE 
-#  2753   143
+# FALSE  TRUE                            
+#  2778   144
+
 pheno[i,failed:=TRUE]
 
 tmp = copy(metrics)
