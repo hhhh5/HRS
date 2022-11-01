@@ -144,15 +144,9 @@ rm(x,chunks,f)
 ## ---------------------------------------------------
 ## Quality control
 
-pheno[,failed:=FALSE]
-
-
-## -----------
 ## Sex check
+
 pheno[,predicted_sex:=predict_sex(X,Y,which(sex=='m'),which(sex=='f'))]
-table(pheno$sex == pheno$predicted_sex)                           
-# FALSE  TRUE                                            
-#     1  2908  
 
 png('intermediate/qc1.png')
 tmp = pheno[sex==predicted_sex]
@@ -162,25 +156,16 @@ points(Y ~ X,data=tmp,pch=ifelse(tmp$sex=='f',1,4),col=2)
 legend('topright',pch=c(1,4),legend=c('female','male'))
 dev.off()
 
-pheno[sex!=predicted_sex,failed:=TRUE]
-
 ## -----------
 ## Undetected probes
-table(pheno$undetected > 1e5)
-# FALSE  TRUE 
-#  2571   351 
 
-pheno[undetected > 1e5,failed:=TRUE]
+table(pheno$undetected > 1e5)
 
 ## -----------
 ## SNP outliers
+
 tmp = call_genotypes(snps)
 pheno$snp_outlier = snp_outliers(tmp)
-table(pheno$snp_outlier > -3)
-# FALSE  TRUE 
-#  2846    76 
-
-pheno[snp_outlier > -3,failed:=TRUE]
 
 png('intermediate/snps.png')
 stripchart(pheno$snp_outlier,m='j')
@@ -197,12 +182,8 @@ table(tmp[,`1` == `2`])
 
 ## -----------
 ## Control probe metrics
-i = sample_failure(metrics)
-table(i)
-# FALSE  TRUE                            
-#  2778   144
 
-pheno[i,failed:=TRUE]
+pheno$failed = sample_failure(metrics)
 
 tmp = copy(metrics)
 tmp$plate = pheno$plate
@@ -216,9 +197,20 @@ p = ( ggplot(tmp)
 ggsave(p,file='intermediate/metrics.pdf')
 
 ## ---------------------------------------------------
+## Summary
+
+pheno$exclude = FALSE
+pheno[(failed == TRUE) | (snp_outlier > -3) | (sex!=predicted_sex) | (undetected > 1e5),exclude:=TRUE]
+
+pheno[,.N,.(rep,failed)]
+pheno[,.N,.(rep,sex!=predicted_sex)]
+pheno[,.N,.(rep,snp_outlier > -3)]
+pheno[,.N,.(rep,undetected > 1e5)]
+
+## ---------------------------------------------------
 # Subsetting
 
-keep = which(pheno$failed==FALSE)
+keep = which(pheno$exclude==FALSE)
 
 pheno   = pheno  [ keep]
 meth    = meth   [,keep]
