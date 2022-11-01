@@ -35,8 +35,15 @@ plates = paste0('Thyagarajan_Sample_',plates)
 train = pheno[plate %in% plates & rep == 1]$j
 test  = setdiff(pheno[rep==1]$j,train)
 
+pheno[train,split:='train']
+pheno[test ,split:='test' ]
+
 cat('# samples in training set:',length(train),'\n')
 cat('# samples in test     set:',length(test ),'\n')
+
+tmp = melt(pheno,id.vars=c('FID','split'),measure.vars=c('sex','race','hispanic'))
+dcast(tmp,variable+value ~ split,fun=length)
+
 
 rm(plates)
 

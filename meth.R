@@ -10,7 +10,8 @@ pheno = pheno[,.(
 	,file  = paste0('/nfs/turbo/bakulski1/Datasets/HRS/jonheiss/sensitive/idats/',Slide,'_',Array)
 	,sex   = ifelse(Reported == 'M','m','f')
 	,age   = PAGE  # patient age
-	,race  = RACE 
+	,race  = RACE
+	,hispanic = HISPANIC               # {0 not obtained/1-3 hispanic/5 non-hispanic}
 	,BIRTHMO     # ‘%Y’ Year with century.
 	,BIRTHYR     # ‘%m’ Month as decimal number (01-12).
 	,COLLECTDATE # {%Y-%m-%d %H:%M:%S}
@@ -37,7 +38,7 @@ dupes = dupes[,.(
 	# ,Bharat.s.Lab.plates             # {dup 11}
 	# ,X.1                             # {onto T31}
 	# ,orig_plate                      # {Thyagarajan_Sample_111}
-	# ,HISPANIC                        # {1/2/5}
+	,hispanic = HISPANIC               # {0 not obtained/1-3 hispanic/5 non-hispanic}
 	# ,ethrace                         # {h/nhb/nhw}
 	)]
 
@@ -48,6 +49,7 @@ dupes$rep = 2L
 pheno = rbind(pheno,dupes,use.names=TRUE,fill=TRUE); rm(dupes)
 
 pheno[,race:=factor(race,levels=c(1,2,7,0),labels=c('white','black','other','unknown'))]
+pheno[,hispanic:=factor(hispanic,levels=c(0,1,2,3,5),labels=c('unknown','hispanic','hispanic','hispanic','non-hispanic'))]
 
 pheno = pheno[FID %in% LC$FID]
 
