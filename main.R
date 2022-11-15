@@ -44,8 +44,7 @@ cat('# samples in test     set:',length(test ),'\n')
 tmp = melt(pheno,id.vars=c('FID','split'),measure.vars=c('sex','race','hispanic'))
 dcast(tmp,variable+value ~ split,fun=length)
 
-
-rm(plates)
+rm(plates,tmp)
 
 # ---------------------------------------------------
 # Model training
