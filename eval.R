@@ -113,4 +113,4 @@ p =
 + xlab('Index') + ylab('Gain in explained variance')
 )
 
-ggsave(p,file='gains.png',width=5,height=5)
+ggsave(p,file='fig2.png',width=5,height=5)
