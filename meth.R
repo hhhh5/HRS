@@ -28,18 +28,7 @@ dupes = dupes[,.(
 	,sex   = ifelse(GENDER==1,'m','f') # {1/2}
 	,age   = PAGE                    
 	,race  = RACE                      # {1/2/7}
-	# ,blindedID = Blind.Dup.ID        # {F0000000}
-	# ,orig_methid                     # {202163110034_R05C01}
-	# ,HHID                            # Household Identifier {000000}
-	# ,PN                              # PERSON NUMBER {000}
-	# ,Pair.ID                         # {HRSDNA11}
-	# ,methylation.plates              # {onto T13}
-	# ,X                               # {12-H9}
-	# ,Bharat.s.Lab.plates             # {dup 11}
-	# ,X.1                             # {onto T31}
-	# ,orig_plate                      # {Thyagarajan_Sample_111}
 	,hispanic = HISPANIC               # {0 not obtained/1-3 hispanic/5 non-hispanic}
-	# ,ethrace                         # {h/nhb/nhw}
 	)]
 
 # Mark original and duplicate samples
